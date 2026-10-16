@@ -73,11 +73,11 @@
       </div>
       <form class="calculator" id="profile-form">
         <h2>找到你的薄肌训练起点</h2>
-        <p class="sub">数据只在当前页面计算，不会保存</p>
+        <p class="sub">设置会记录在当前网址中，收藏网址即可保留；不使用浏览器存储</p>
         <div class="form-grid">
-          <label class="field"><span>身高</span><span class="input-wrap"><input id="height" type="number" inputmode="decimal" value="168" min="120" max="230" required><i class="unit">cm</i></span></label>
+          <label class="field"><span>身高</span><span class="input-wrap"><input id="height" type="number" inputmode="decimal" value="175" min="120" max="230" required><i class="unit">cm</i></span></label>
           <label class="field"><span>体重</span><span class="input-wrap"><input id="weight" type="number" inputmode="decimal" value="58" min="30" max="250" step="0.1" required><i class="unit">kg</i></span></label>
-          <label class="field"><span>年龄</span><span class="input-wrap"><input id="age" type="number" inputmode="numeric" value="38" min="16" max="85" required><i class="unit">岁</i></span></label>
+          <label class="field"><span>年龄</span><span class="input-wrap"><input id="age" type="number" inputmode="numeric" value="18" min="16" max="85" required><i class="unit">岁</i></span></label>
           <label class="field"><span>标准俯卧撑连续次数</span><span class="input-wrap"><input id="pushups" type="number" inputmode="numeric" value="5" min="0" max="100" required><i class="unit">次</i></span></label>
         </div>
         <button class="calc-btn" type="submit">更新建议</button>
@@ -184,8 +184,30 @@
         const ageNote=age>=35?'每次先热身 6–8 分钟，同类肌群至少休息 48 小时。':'每次先热身 5–8 分钟，并把动作稳定放在次数前面。';
         adviceOut.textContent='你的 BMI 为 '+bmi.toFixed(1)+'，'+body+'。俯卧撑建议从“'+level+'”开始，做 3 组，'+dose+'，每组留约 2 次余力。'+ageNote;
       }
-      form.addEventListener('submit',calculate);
+      form.addEventListener('submit',function(e){calculate(e);writeHash();});
+      // 网址参数记忆：设置只记录在 URL hash 中，不使用任何浏览器存储 API
+      const HASH_FIELDS=[
+        {key:'h',id:'height',min:120,max:230},
+        {key:'w',id:'weight',min:30,max:250},
+        {key:'a',id:'age',min:16,max:85},
+        {key:'p',id:'pushups',min:0,max:100}
+      ];
+      function readHash(){
+        const h=location.hash.replace(/^#/,'');
+        if(!h)return;
+        const p={};
+        h.split('&').forEach(function(s){const kv=s.split('=');if(kv.length===2)p[kv[0]]=Number(kv[1]);});
+        HASH_FIELDS.forEach(function(f){
+          const v=p[f.key];
+          if(typeof v==='number'&&!isNaN(v)&&v>=f.min&&v<=f.max)document.getElementById(f.id).value=v;
+        });
+      }
+      function writeHash(){
+        history.replaceState(null,'','#'+HASH_FIELDS.map(function(f){return f.key+'='+document.getElementById(f.id).value;}).join('&'));
+      }
+      readHash();
       calculate();
+      HASH_FIELDS.forEach(function(f){document.getElementById(f.id).addEventListener('input',writeHash);});
       document.querySelectorAll('.filter').forEach(function(btn){btn.addEventListener('click',function(){
         document.querySelectorAll('.filter').forEach(function(x){x.classList.remove('active')});
         btn.classList.add('active');
