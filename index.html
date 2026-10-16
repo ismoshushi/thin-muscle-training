@@ -1,448 +1,198 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>微信公众号内嵌滚动图文区域生成器</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js"></script>
-
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #2c3e50;
-            border-bottom: 1px solid #eaecef;
-            padding-bottom: 0.3em;
-        }
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #34495e;
-        }
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-        textarea {
-            min-height: 200px;
-            font-family: 'Menlo', 'Consolas', monospace;
-        }
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.2s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .output-area {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
-            border: 1px solid #adb5bd;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 13px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .preview-area {
-            margin-top: 20px;
-            padding: 0; /* Let the generated code define its own padding if any */
-            border: 1px dashed #ccc;
-            border-radius: 4px;
-            /* The preview will be the exact generated HTML, so it will have its own height/scroll */
-        }
-        .info {
-            font-size: 0.9em; color: #555; margin-bottom: 15px;
-            background-color: #e7f3fe;
-            border-left: 4px solid #2196F3;
-            padding: 10px;
-        }
-        .checkbox-label {
-            font-weight: normal;
-            display: flex;
-            align-items: center;
-        }
-        .checkbox-label input {
-            width: auto;
-            margin-right: 8px;
-        }
-        #copy-status {
-            margin-left:10px;
-            font-size:0.9em;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <script>
+    if(location.pathname.indexOf('/spaces/v2/')===0){
+      const base=document.createElement('base');
+      base.href='assets/';
+      document.head.appendChild(base);
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+  <title>薄肌训练｜每周三次的居家徒手训练</title>
+  <meta name="description" content="一套每周三次、以徒手为主的居家薄肌训练计划，包含俯卧撑进阶、身体评估和 14 个循环动作演示。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:title" content="薄肌训练｜每周三次的居家徒手训练" />
+  <meta property="og:description" content="循序进阶，不追求大块头。含身体评估、三日训练计划和 14 个循环动作演示。" />
+  <meta property="og:url" content="https://ismoshushi.github.io/thin-muscle-training/" />
+  <meta property="og:image" content="https://ismoshushi.github.io/thin-muscle-training/images/preview.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="薄肌训练，每周三次的居家徒手训练" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="薄肌训练｜每周三次的居家徒手训练" />
+  <meta name="twitter:description" content="循序进阶，不追求大块头。含身体评估、三日训练计划和 14 个循环动作演示。" />
+  <meta name="twitter:image" content="https://ismoshushi.github.io/thin-muscle-training/images/preview.jpg" />
+  <meta name="twitter:image:alt" content="薄肌训练，每周三次的居家徒手训练" />
+  <style>
+    :root{
+      color-scheme:light dark;
+      --paper:#f4f2ee;--panel:#fff;--ink:#171a1c;--muted:#62676b;--line:#d9d7d2;
+      --rust:#c34e2e;--rust-2:#8f351f;--blue:#245f84;--blue-soft:#dcebf2;--green:#347052;
+      --shadow:0 16px 42px rgba(36,31,27,.09);--radius:22px;
+    }
+    @media(prefers-color-scheme:dark){:root{
+      --paper:#111415;--panel:#1b1f21;--ink:#f6f3ee;--muted:#b5b5af;--line:#34393b;
+      --rust:#ef7956;--rust-2:#f19a7e;--blue:#73b8df;--blue-soft:#1b3440;--green:#76ba93;
+      --shadow:0 18px 44px rgba(0,0,0,.28)
+    }}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans SC",sans-serif;line-height:1.55}button,input{font:inherit}button{color:inherit}
+    .shell{width:min(1180px,calc(100% - 32px));margin:0 auto;padding:30px 0 76px}
+    .mast{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:stretch}
+    .intro{padding:30px 10px 24px 2px;display:flex;flex-direction:column;justify-content:center}.count{font-family:"Roboto Slab",serif;font-weight:700;font-size:clamp(72px,12vw,152px);line-height:.78;color:var(--rust);letter-spacing:-.07em;margin-bottom:22px}.intro h1{font-size:clamp(31px,4vw,56px);line-height:1.05;letter-spacing:-.04em;margin:0 0 16px;max-width:12ch}.intro p{font-size:17px;color:var(--muted);max-width:40em;margin:0}.gear{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}.chip{border:1px solid var(--line);padding:7px 12px;border-radius:999px;background:transparent;font-size:13px;font-weight:700}
+    .calculator{background:var(--panel);border-top:5px solid var(--rust);padding:26px;border-radius:8px 8px var(--radius) var(--radius);box-shadow:var(--shadow)}.calculator h2{margin:0 0 4px;font-size:24px}.sub{color:var(--muted);font-size:14px;margin:0 0 20px}.preset-wrap{border:0;padding:0;margin:0 0 18px}.preset-wrap legend{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:7px}.presets{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.preset{border:1px solid var(--line);background:var(--paper);padding:10px 8px;border-radius:10px;cursor:pointer;font-weight:700;font-size:13px;text-align:center}.preset[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.field{display:block}.field span{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:0 0 6px}.input-wrap{position:relative}.input-wrap input{width:100%;padding:13px 45px 13px 13px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);outline:none;font-weight:700}.input-wrap input:focus{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 20%,transparent)}.unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted)}.calc-btn{width:100%;border:0;background:var(--rust);color:white;border-radius:11px;padding:13px 16px;margin-top:16px;font-weight:800;cursor:pointer}.calc-btn:hover{background:var(--rust-2)}.error{min-height:20px;color:var(--rust);font-size:13px;margin-top:8px}
+    .result{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:26px 0 12px}.stat{background:var(--panel);padding:19px}.stat b{display:block;font-family:"Roboto Slab",serif;font-size:30px;line-height:1.1}.stat small{color:var(--muted)}.readout{margin:0;padding:16px 18px;background:var(--blue-soft);border-radius:12px;color:var(--ink)}
+    .section{margin-top:64px}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:20px}.section-head h2{font-size:clamp(26px,3vw,40px);letter-spacing:-.035em;line-height:1.1;margin:0}.section-head p{margin:0;max-width:580px;color:var(--muted)}
+    .week{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.day{background:var(--panel);padding:20px;border-radius:18px}.day:nth-child(2){background:var(--ink);color:var(--paper)}.day-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}.day strong{font-size:19px}.day em{font-style:normal;font-size:12px;font-weight:800;color:var(--rust)}.day:nth-child(2) em{color:#ff9a78}.day ol{padding-left:22px;margin:0}.day li{margin:9px 0}.day small{display:block;color:var(--muted);margin-top:12px}.day:nth-child(2) small{color:#c8c9c5}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.filter{border:1px solid var(--line);background:var(--panel);padding:8px 13px;border-radius:9px;cursor:pointer;font-weight:700;font-size:13px}.filter.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .library{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.move{background:var(--panel);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 0 var(--line)}.move[hidden]{display:none}.move img{width:100%;aspect-ratio:16/10;object-fit:contain;display:block;background:#f4f5f3}.move-media{position:relative}.move-media img{height:100%}.motion-mark{position:absolute;right:10px;bottom:10px;padding:4px 8px;border-radius:999px;background:rgba(23,26,28,.82);color:#fff;font-size:10px;font-weight:800;letter-spacing:.02em}.move-body{padding:17px;display:flex;flex-direction:column;gap:10px;flex:1}.tags{display:flex;gap:7px;flex-wrap:wrap}.tag{font-size:11px;font-weight:800;color:var(--blue);background:var(--blue-soft);padding:4px 8px;border-radius:999px}.move h3{margin:0;font-size:20px}.dose{font-weight:800;color:var(--rust);font-size:14px}.move details{margin-top:auto;border-top:1px solid var(--line);padding-top:10px}.move summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;align-items:center}.move summary::-webkit-details-marker{display:none}.move summary:after{content:"＋";color:var(--rust);font-size:20px}.move details[open] summary:after{content:"−"}.move ul{margin:10px 0 0;padding-left:19px;color:var(--muted);font-size:14px}.move li{margin:6px 0}
+    .progression{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel)}.step{padding:20px;border-right:1px solid var(--line)}.step:last-child{border-right:0}.step b{display:flex;align-items:center;gap:10px;font-size:17px}.step i{font-style:normal;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--rust);color:white;font-family:"Roboto Slab",serif}.step p{margin:8px 0 0;color:var(--muted);font-size:14px}
+    .references{margin-top:46px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;gap:8px 14px;align-items:baseline;flex-wrap:wrap}.references strong{color:var(--ink)}.references a{color:var(--blue);font-weight:700;text-decoration:none}.references a:hover{text-decoration:underline}
+    .source{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.safety{font-weight:600;max-width:760px}
+    @media(max-width:900px){.mast{grid-template-columns:1fr}.intro{padding-top:12px}.count{font-size:96px}.week,.library{grid-template-columns:repeat(2,1fr)}.progression{grid-template-columns:repeat(2,1fr)}.step:nth-child(2){border-right:0}.step:nth-child(-n+2){border-bottom:1px solid var(--line)}.section-head{display:block}.section-head p{margin-top:8px}}
+    @media(max-width:620px){.shell{width:min(100% - 22px,1180px);padding-top:16px}.intro h1{font-size:38px}.intro p{font-size:15px}.calculator{padding:20px}.result{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.week,.library{grid-template-columns:1fr}.section{margin-top:46px}.section-head h2{font-size:30px}.progression{grid-template-columns:1fr}.step{border-right:0;border-bottom:1px solid var(--line)!important}.step:last-child{border-bottom:0!important}.move img{aspect-ratio:16/9}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>微信公众号内嵌滚动图文区域生成器</h1>
-        <p class="info">
-            本工具将 Markdown 文本（可包含图片）转换为 HTML，并嵌入到一个固定高度的可滚动 `div` 中。
-            生成的代码可粘贴到微信公众号编辑器的HTML模式下。
-        </p>
-        <p class="info">
-            作者：杨老师，微信：dreamger
-            请我喝咖啡就加我，不喝就别加了=。=
-        </p>
-        <label for="markdown-input">输入 Markdown 文本 (可包含图片 `![alt](url)`):</label>
-        <textarea id="markdown-input" placeholder="在此输入您的 Markdown 文本..."></textarea>
-
-        <div class="options-grid">
-            <div>
-                <label for="container-height">滚动区域高度 (例如: 400px):</label>
-                <input type="text" id="container-height" value="400px">
-            </div>
-            <div>
-                <label for="border-radius">圆角大小 (例如: 12px):</label>
-                <input type="text" id="border-radius" value="12px">
-            </div>
-            <div>
-                <label for="border-style">边框样式 (例如: 1px solid #eee):</label>
-                <input type="text" id="border-style" value="1px solid #eee">
-            </div>
-            <div>
-                <label for="padding-right-scroll">内边距-右 (防遮挡滚动条):</label>
-                <input type="text" id="padding-right-scroll" value="8px">
-            </div>
+  <main class="shell">
+    <section class="mast" aria-labelledby="hero-title">
+      <div class="intro">
+        <div class="count">薄肌</div>
+        <h1 id="hero-title">每周三次的训练</h1>
+        <p>目标是练出紧实、清晰的薄肌线条，不追求大块头。以俯卧撑等基础徒手动作为主，循序增加次数和难度；单杠、壶铃、哑铃作为可选补充。</p>
+        <div class="gear" aria-label="计划特点"><span class="chip">薄肌塑形</span><span class="chip">徒手为主</span><span class="chip">14 个动态演示</span><span class="chip">开源参考</span><span class="chip">每周 3 次</span></div>
+      </div>
+      <form class="calculator" id="profile-form">
+        <h2>找到你的薄肌训练起点</h2>
+        <p class="sub">数据只在当前页面计算，不会保存</p>
+        <div class="form-grid">
+          <label class="field"><span>身高</span><span class="input-wrap"><input id="height" type="number" inputmode="decimal" value="168" min="120" max="230" required><i class="unit">cm</i></span></label>
+          <label class="field"><span>体重</span><span class="input-wrap"><input id="weight" type="number" inputmode="decimal" value="58" min="30" max="250" step="0.1" required><i class="unit">kg</i></span></label>
+          <label class="field"><span>年龄</span><span class="input-wrap"><input id="age" type="number" inputmode="numeric" value="38" min="16" max="85" required><i class="unit">岁</i></span></label>
+          <label class="field"><span>标准俯卧撑连续次数</span><span class="input-wrap"><input id="pushups" type="number" inputmode="numeric" value="5" min="0" max="100" required><i class="unit">次</i></span></label>
         </div>
-         <div>
-            <label class="checkbox-label">
-                <input type="checkbox" id="include-gradient" checked>
-                包含底部渐变遮罩 (提示可滚动)
-            </label>
-        </div>
+        <button class="calc-btn" type="submit">更新建议</button>
+        <div class="error" id="error" aria-live="polite"></div>
+      </form>
+    </section>
 
+    <section aria-live="polite" aria-label="身体评估">
+      <div class="result">
+        <div class="stat"><b id="bmi">20.5</b><small>BMI · 健康范围</small></div>
+        <div class="stat"><b id="intensity">留 2 次</b><small>每组结束时的余力</small></div>
+        <div class="stat"><b id="recovery">48h</b><small>同类肌群恢复间隔</small></div>
+      </div>
+      <p class="readout" id="advice">你目前适合从每周三练开始，把重点放在动作稳定和逐周进步。38 岁不晚，热身和恢复比追重量更重要。</p>
+    </section>
 
-        <button id="generate-code">生成微信代码</button>
+    <section class="section" aria-labelledby="week-title">
+      <div class="section-head"><h2 id="week-title">周一、周三、周五这样练</h2><p>按自然顺序完成每周 3 次训练：周一第 1 天、周三第 2 天、周五第 3 天，中间各休息 1 天。三个训练日都以徒手为主；俯卧撑选择你能稳定完成 6–12 次的级别，每组保留约 2 次余力，动作变形就停。</p></div>
+      <div class="week">
+        <article class="day"><div class="day-top"><strong>周一 · 第 1 天</strong><em>基础</em></div><ol><li>推荐俯卧撑级别 · 3×6–12</li><li>自重深蹲 · 3×12–15</li><li>臀桥 · 3×12–15</li><li>死虫式 · 3×8/侧</li></ol><small>开始前活动手腕、肩、髋共 6–8 分钟</small></article>
+        <article class="day"><div class="day-top"><strong>周三 · 第 2 天</strong><em>巩固</em></div><ol><li>推荐俯卧撑级别 · 3×6–12</li><li>自重深蹲 · 3×12–15</li><li>有单杠：悬垂 · 3×20 秒</li><li>死虫式 · 3×8/侧</li></ol><small>没有单杠就把臀桥做 3×15</small></article>
+        <article class="day"><div class="day-top"><strong>周五 · 第 3 天</strong><em>进步</em></div><ol><li>俯卧撑慢下放 3 秒 · 3×6–10</li><li>自重深蹲慢下放 3 秒 · 3×10</li><li>臀桥顶端停 2 秒 · 3×12</li><li>死虫式 · 3×8/侧</li></ol><small>完成后休息两天，下周一再开始</small></article>
+      </div>
+    </section>
 
-        <h2>生成的代码 (复制以下全部内容)</h2>
-        <div id="generated-code-output" class="output-area" spellcheck="false">点击“生成代码”按钮后，代码将显示在此处。</div>
-        <button id="copy-code" style="background-color: #28a745;">复制代码到剪贴板</button>
-        <span id="copy-status"></span>
+    <section class="section" aria-labelledby="library-title">
+      <div class="section-head"><h2 id="library-title">动作库</h2><p>选的都是家里能完成的基础动作。动图会直接循环演示完整轨迹；点开“动作步骤”看关键要领，训练时以稳定、无痛的动作范围为准。</p></div>
+      <div class="filters" role="group" aria-label="按器材筛选">
+        <button class="filter active" type="button" data-filter="all">全部 14</button>
+        <button class="filter" type="button" data-filter="bodyweight">徒手 6</button>
+        <button class="filter" type="button" data-filter="bar">单杠 1</button>
+        <button class="filter" type="button" data-filter="kettlebell">壶铃 5</button>
+        <button class="filter" type="button" data-filter="dumbbell">哑铃 2</button>
+      </div>
+      <div class="library" id="library">
+        <article class="move" data-equipment="bodyweight"><div class="move-media"><img src="images/incline-push-up.gif" alt="上斜俯卧撑完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">徒手</span><span class="tag">俯卧撑 · 入门</span></div><h3>上斜俯卧撑</h3><div class="dose">3 组 × 8–12 次</div><details open><summary>动作步骤</summary><ul><li>双手略宽于肩，撑在不会移动的桌沿或台面</li><li>脚向后走，让头、背、髋、脚跟成一条直线</li><li>吸气屈肘，胸口靠近台面；呼气推回</li><li>腰不要塌，肘部向身体斜后方约 45°</li></ul></details></div></article>
+        <article class="move" data-equipment="bodyweight"><div class="move-media"><img src="images/knee-push-up.gif" alt="跪姿俯卧撑完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">徒手</span><span class="tag">俯卧撑 · 基础</span></div><h3>跪姿俯卧撑</h3><div class="dose">3 组 × 6–12 次</div><details><summary>动作步骤</summary><ul><li>膝盖着地，双手略宽于肩，脚背自然放松</li><li>收紧腹部，让肩、髋、膝保持一条直线</li><li>胸口向双手之间下降，肘部向斜后方</li><li>推起时身体整体移动，不要先抬胸或撅臀</li></ul></details></div></article>
+        <article class="move" data-equipment="bodyweight"><div class="move-media"><img src="images/push-up.gif" alt="标准俯卧撑完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">徒手</span><span class="tag">俯卧撑 · 标准</span></div><h3>标准俯卧撑</h3><div class="dose">3 组 · 保留 2 次余力</div><details><summary>动作步骤</summary><ul><li>双手略宽于肩，脚尖撑地，头到脚跟保持笔直</li><li>肩胛稳定、腹部和臀部收紧，不塌腰</li><li>胸口接近地面，肘部与身体约成 45°</li><li>手掌压地推回；动作开始变形就结束这一组</li></ul></details></div></article>
+        <article class="move" data-equipment="bodyweight"><div class="move-media"><img src="images/bodyweight-squat.gif" alt="自重深蹲完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">徒手</span><span class="tag">腿 / 臀</span></div><h3>自重深蹲</h3><div class="dose">3 组 × 12–15 次</div><details><summary>动作步骤</summary><ul><li>双脚约与肩同宽，脚尖自然向外</li><li>吸气收腹，臀部向后下方坐</li><li>膝盖跟随脚尖方向，不要向内夹</li><li>脚掌完整压地，呼气站起并夹紧臀部</li></ul></details></div></article>
+        <article class="move" data-equipment="bodyweight"><div class="move-media"><img src="images/glute-bridge.gif" alt="臀桥完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">徒手</span><span class="tag">臀 / 腿后侧</span></div><h3>臀桥</h3><div class="dose">3 组 × 12–15 次</div><details><summary>动作步骤</summary><ul><li>仰卧屈膝，双脚踩地并靠近臀部</li><li>轻收下巴和腹部，避免腰部先拱起</li><li>脚跟压地，夹臀把髋部抬起</li><li>肩到膝接近直线后停 1 秒，再控制下放</li></ul></details></div></article>
+        <article class="move" data-equipment="bodyweight"><div class="move-media"><img src="images/dead-bug.gif" alt="死虫式完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">徒手</span><span class="tag">核心</span></div><h3>死虫式</h3><div class="dose">3 组 × 8 次 / 侧</div><details><summary>动作步骤</summary><ul><li>仰卧抬起双臂，髋膝各弯曲约 90°</li><li>呼气收紧腹部，让下背部轻贴地面</li><li>缓慢伸展对侧手脚，腰部不要离地</li><li>回到中间换边，动作全程保持顺畅呼吸</li></ul></details></div></article>
 
-        <h2>效果预览 (此预览基于浏览器渲染，最终效果以微信编辑器为准)</h2>
-        <div id="live-preview" class="preview-area">
-            预览将在此处显示...
-        </div>
-    </div>
+        <article class="move" data-equipment="bar"><div class="move-media"><img src="images/pull-up.gif" alt="引体向上完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">单杠</span><span class="tag">背 / 握力</span></div><h3>单杠进阶</h3><div class="dose">3 组 · 选当前级别</div><details><summary>动作步骤</summary><ul><li>第一级：双手握杠悬垂 20–30 秒</li><li>第二级：手臂不弯，肩胛下沉上提 6–10 次</li><li>第三级：踩凳到顶部，慢慢下降 3–5 秒</li><li>能完成 5 次慢速下降后，再尝试完整引体</li></ul></details></div></article>
 
-    <script>
-        const markdownInputEl = document.getElementById('markdown-input');
-        const containerHeightInputEl = document.getElementById('container-height');
-        const borderRadiusInputEl = document.getElementById('border-radius');
-        const borderStyleInputEl = document.getElementById('border-style');
-        const paddingRightScrollEl = document.getElementById('padding-right-scroll');
-        const includeGradientCheckboxEl = document.getElementById('include-gradient');
-        const generateButtonEl = document.getElementById('generate-code');
-        const outputDivEl = document.getElementById('generated-code-output');
-        const previewDivEl = document.getElementById('live-preview');
-        const copyButtonEl = document.getElementById('copy-code');
-        const copyStatusSpanEl = document.getElementById('copy-status');
+        <article class="move" data-equipment="kettlebell"><div class="move-media"><img src="images/goblet-squat.gif" alt="高脚杯深蹲完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">壶铃</span><span class="tag">腿 / 臀</span></div><h3>高脚杯深蹲</h3><div class="dose">3 组 × 8–12 次</div><details><summary>动作步骤</summary><ul><li>双手托住壶铃两侧，贴近胸口</li><li>脚尖自然向外，先收紧腹部</li><li>臀部向下坐，膝盖跟随脚尖方向</li><li>脚掌压地站起，壶铃全程贴近身体</li></ul></details></div></article>
+        <article class="move" data-equipment="kettlebell"><div class="move-media"><img src="images/kb-rdl.gif" alt="罗马尼亚硬拉完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">壶铃</span><span class="tag">臀 / 腿后侧</span></div><h3>罗马尼亚硬拉</h3><div class="dose">3 组 × 10–12 次</div><details><summary>动作步骤</summary><ul><li>壶铃贴近腿，双脚与髋同宽，膝盖微屈</li><li>保持背部平直，把臀部向后推</li><li>壶铃沿腿下放到小腿上部</li><li>感到大腿后侧拉伸后，夹臀站直</li></ul></details></div></article>
+        <article class="move" data-equipment="kettlebell"><div class="move-media"><img src="images/floor-press.gif" alt="地板卧推完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">壶铃</span><span class="tag">胸 / 三头</span></div><h3>壶铃地板卧推</h3><div class="dose">3 组 × 8–12 次</div><details><summary>动作步骤</summary><ul><li>仰卧屈膝，壶铃放在前臂外侧</li><li>肩胛贴地，手腕保持直立</li><li>向上推到手臂伸直，不要耸肩</li><li>控制下放，肘部轻触地面后再次推起</li></ul></details></div></article>
+        <article class="move" data-equipment="kettlebell"><div class="move-media"><img src="images/one-arm-row.gif" alt="单臂壶铃划船完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">壶铃</span><span class="tag">背 / 手臂</span></div><h3>单臂壶铃划船</h3><div class="dose">3 组 × 10 次 / 侧</div><details><summary>动作步骤</summary><ul><li>一手扶同侧大腿，髋部后移并保持背部平直</li><li>肩膀远离耳朵，让壶铃自然下垂</li><li>肘部贴近身体，把壶铃拉向髋部</li><li>顶端停 1 秒，再控制下放到手臂伸直</li></ul></details></div></article>
+        <article class="move" data-equipment="kettlebell"><div class="move-media"><img src="images/half-kneel-press.gif" alt="半跪姿单臂壶铃推举完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">壶铃</span><span class="tag">肩 / 核心</span></div><h3>半跪姿壶铃推举</h3><div class="dose">3 组 × 8 次 / 侧</div><details><summary>动作步骤</summary><ul><li>一膝跪地，前脚踩稳，臀部和腹部收紧</li><li>壶铃放在肩前，手腕保持直立</li><li>向正上方推起，不要后仰或侧弯</li><li>控制下放到肩前，完成一侧再换边</li></ul></details></div></article>
 
-        // Configure marked.js
-        marked.setOptions({
-            breaks: true, // Interpret carriage returns as <br> (GFM behavior)
-            gfm: true,    // Enable GitHub Flavored Markdown
-            sanitize: false // Disable internal sanitization, DOMPurify will be used
-        });
+        <article class="move" data-equipment="dumbbell"><div class="move-media"><img src="images/dumbbell-row.gif" alt="单臂哑铃划船完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">哑铃</span><span class="tag">背 / 手臂</span></div><h3>单臂哑铃划船</h3><div class="dose">3 组 × 10 次 / 侧</div><details><summary>动作步骤</summary><ul><li>一手扶大腿，髋部后移，背部保持平直</li><li>哑铃自然下垂，肩膀不要耸起</li><li>肘部贴近身体，把哑铃拉向髋部</li><li>顶端停 1 秒，再控制下放到手臂伸直</li></ul></details></div></article>
+        <article class="move" data-equipment="dumbbell"><div class="move-media"><img src="images/dumbbell-press.gif" alt="半跪姿单臂哑铃推举完整动作循环演示"><span class="motion-mark">循环演示</span></div><div class="move-body"><div class="tags"><span class="tag">哑铃</span><span class="tag">肩 / 核心</span></div><h3>半跪姿哑铃推举</h3><div class="dose">3 组 × 8 次 / 侧</div><details><summary>动作步骤</summary><ul><li>一膝跪地，前脚踩稳，保持骨盆正对前方</li><li>哑铃放在肩前，手腕保持直立</li><li>收紧腹部后向正上方推起</li><li>手臂伸直但不锁死，控制下放后换边</li></ul></details></div></article>
+      </div>
+    </section>
 
-        // Function to apply inline styles to HTML elements generated from Markdown
-        function styleHtmlContent(htmlString) {
-            // Use DOMParser to manipulate the HTML string as a DOM tree
-            const parser = new DOMParser();
-            // Wrap the HTML string in a div to ensure a single root element for parsing
-            const doc = parser.parseFromString(`<div>${htmlString}</div>`, 'text/html');
-            const contentRoot = doc.body.firstElementChild; // Get the wrapper div
+    <section class="section" aria-labelledby="progress-title">
+      <div class="section-head"><h2 id="progress-title">俯卧撑就按这条线升级</h2><p>当一个级别能连续两次训练稳定做到每组 12 次，再进入下一级。不要同时加难度和加组数。</p></div>
+      <div class="progression"><div class="step"><b><i>1</i>上斜俯卧撑</b><p>双手撑稳固桌沿，身体保持一条直线</p></div><div class="step"><b><i>2</i>跪姿俯卧撑</b><p>膝盖着地，肩到膝保持笔直</p></div><div class="step"><b><i>3</i>标准俯卧撑</b><p>胸口接近地面，肘部向斜后方</p></div><div class="step"><b><i>4</i>慢速标准</b><p>下放 3 秒，底部停 1 秒再推起</p></div></div>
+    </section>
 
-            if (!contentRoot) return htmlString; // Should not happen with the wrapper
+    <nav class="references" aria-label="开源动作库参考">
+      <strong>开源参考</strong>
+      <a href="https://github.com/crazynudelsieb/free-exercise-db-mirror" target="_blank" rel="noopener noreferrer">Free Exercise DB</a>
+      <a href="https://github.com/hassarok/free-exercise-db-with-videos" target="_blank" rel="noopener noreferrer">Free Exercise DB with Videos</a>
+      <a href="https://github.com/mohamedatef90/exercise-library" target="_blank" rel="noopener noreferrer">Exercise Library</a>
+      <a href="https://github.com/ExerciseDB/exercisedb-api" target="_blank" rel="noopener noreferrer">ExerciseDB</a>
+      <a href="https://github.com/smartworldarafath/Open-GYM" target="_blank" rel="noopener noreferrer">Open-GYM</a>
+    </nav>
 
-            // Style images
-            contentRoot.querySelectorAll('img').forEach(img => {
-                img.style.maxWidth = '100%';    // Ensure image is responsive and fits container
-                img.style.height = 'auto';      // Maintain aspect ratio
-                img.style.display = 'block';    // Remove extra space below image and make it a block element
-                img.style.margin = '10px 0';    // Add vertical spacing around images
-            });
-            
-            // Style paragraphs
-            contentRoot.querySelectorAll('p').forEach(p => {
-                // Check if the paragraph primarily contains an image
-                let onlyImage = true;
-                let hasImage = false;
-                for(let i=0; i < p.childNodes.length; i++) {
-                    const node = p.childNodes[i];
-                    if (node.nodeName === 'IMG') {
-                        hasImage = true;
-                    } else if (node.nodeType !== Node.TEXT_NODE || node.textContent.trim() !== '') {
-                        // If it's not an image and not just whitespace text, then it's not "only image"
-                        onlyImage = false;
-                        break;
-                    }
-                }
-
-                if (hasImage && onlyImage) {
-                    // If paragraph is just a wrapper for an image, remove paragraph's margin and line-height
-                    p.style.margin = '0'; 
-                    p.style.lineHeight = '1'; // Let image's own margin control spacing
-                } else {
-                    // For regular text paragraphs
-                    p.style.margin = '0 0 1em 0'; // Standard bottom margin
-                    p.style.lineHeight = '1.7';   // Readable line height
-                }
-            });
-
-            // Style headings (h1-h6)
-            contentRoot.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
-                h.style.marginTop = '1.2em';    // Space above heading
-                h.style.marginBottom = '0.6em'; // Space below heading
-                h.style.lineHeight = '1.3';     // Heading line height
-            });
-            // Specific font sizes for headings (can be adjusted)
-            contentRoot.querySelectorAll('h1').forEach(h => h.style.fontSize = '1.8em');
-            contentRoot.querySelectorAll('h2').forEach(h => h.style.fontSize = '1.5em');
-            contentRoot.querySelectorAll('h3').forEach(h => h.style.fontSize = '1.25em');
-
-            // Style unordered (ul) and ordered (ol) lists
-            contentRoot.querySelectorAll('ul, ol').forEach(list => {
-                list.style.paddingLeft = '2em';     // Indentation for lists
-                list.style.marginBottom = '1em';    // Space below list
-            });
-            // Style list items (li)
-            contentRoot.querySelectorAll('li').forEach(li => {
-                li.style.marginBottom = '0.3em';    // Space below each list item
-            });
-
-            // Style blockquotes
-            contentRoot.querySelectorAll('blockquote').forEach(bq => {
-                bq.style.marginLeft = '0';          // No extra left margin (padding will handle indent)
-                bq.style.marginRight = '0';
-                bq.style.padding = '10px 15px';     // Inner padding
-                bq.style.borderLeft = '4px solid #ccc'; // Standard left border for quotes
-                bq.style.backgroundColor = '#f9f9f9'; // Light background for quote block
-                bq.style.marginBottom = '1em';      // Space below blockquote
-            });
-
-            // Style preformatted text blocks (usually for code)
-            contentRoot.querySelectorAll('pre').forEach(pre => {
-                pre.style.backgroundColor = '#f5f5f5'; // Background for code block
-                pre.style.padding = '15px';           // Padding inside code block
-                pre.style.borderRadius = '4px';       // Rounded corners
-                pre.style.overflowX = 'auto';         // Allow horizontal scrolling for long code lines
-                pre.style.marginBottom = '1em';       // Space below code block
-                pre.style.lineHeight = '1.45';        // Line height for code
-                // Style the <code> tag inside <pre>
-                const codeEl = pre.querySelector('code');
-                if (codeEl) {
-                    codeEl.style.fontFamily = 'monospace'; // Monospaced font for code
-                    codeEl.style.fontSize = '0.9em';       // Slightly smaller font size for code
-                }
-            });
-            // Style inline code (<code> not inside <pre>)
-            contentRoot.querySelectorAll('code:not(pre code)').forEach(code => {
-                code.style.fontFamily = 'monospace';
-                code.style.backgroundColor = 'rgba(27,31,35,0.05)'; // Subtle background for inline code
-                code.style.padding = '0.2em 0.4em';
-                code.style.borderRadius = '3px';
-                code.style.fontSize = '85%'; // Relative font size for inline code
-            });
-
-            // Ensure the very last element in the content doesn't have a bottom margin
-            // This prevents extra space at the end of the scrollable content
-            if (contentRoot.lastElementChild) {
-                contentRoot.lastElementChild.style.marginBottom = '0';
-            }
-
-            return contentRoot.innerHTML; // Return the modified HTML string
-        }
-
-        // Event listener for the "Generate Code" button
-        generateButtonEl.addEventListener('click', function() {
-            const markdownText = markdownInputEl.value; // Get Markdown from textarea
-            
-            // 1. Convert Markdown to HTML using marked.js
-            let htmlFromMarkdown = marked.parse(markdownText);
-            
-            // 2. Sanitize the HTML using DOMPurify (important for security)
-            htmlFromMarkdown = DOMPurify.sanitize(htmlFromMarkdown, {
-                USE_PROFILES: { html: true }, // Allow standard HTML tags and attributes
-            });
-
-            // 3. Apply custom inline styles to the sanitized HTML
-            htmlFromMarkdown = styleHtmlContent(htmlFromMarkdown);
-
-            // Get user-defined options for the scrollable container
-            const containerHeight = containerHeightInputEl.value || '400px';
-            const borderRadius = borderRadiusInputEl.value || '12px';
-            const borderStyle = borderStyleInputEl.value || '1px solid #eee';
-            const paddingRightScroll = paddingRightScrollEl.value || '8px'; // For scrollbar space
-            const includeGradient = includeGradientCheckboxEl.checked;
-
-            // Generate HTML for the optional bottom gradient overlay
-            let gradientDivHtml = '';
-            if (includeGradient) {
-                gradientDivHtml = `
-    <div style="
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: ${paddingRightScroll}; /* Align with inner div's right padding */
-        height: 30px; /* Height of the gradient fade effect */
-        background: linear-gradient(to top, rgba(255,255,255,0.95), transparent); /* White fade */
-        pointer-events: none; /* Allow clicks/touches to pass through */
-    "></div>`;
-            }
-
-            // Construct the final HTML structure for the scrollable container
-            const finalHtmlStructure = `
-<div style="
-    height: ${containerHeight};
-    overflow: hidden; /* Clip content exceeding the fixed height */
-    border-radius: ${borderRadius};
-    border: ${borderStyle};
-    position: relative; /* For positioning the absolute gradient overlay */
-    margin: 15px 0; /* Standard vertical margin */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-">
-    <div style="
-        height: 100%; /* Fill the outer container's height */
-        overflow-y: scroll; /* Enable vertical scrolling */
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        padding-right: ${paddingRightScroll}; /* Space for the scrollbar */
-        padding-left: 10px; /* Left padding for content */
-        padding-top: 10px;  /* Top padding for content */
-        padding-bottom: 10px; /* Bottom padding for content */
-        box-sizing: border-box;
-    ">
-        ${htmlFromMarkdown}
-        </div>
-    ${gradientDivHtml} </div>
-`;
-            // Display the generated HTML in the output area (as text)
-            outputDivEl.textContent = finalHtmlStructure.trim();
-            // Display the generated HTML in the preview area (rendered)
-            previewDivEl.innerHTML = finalHtmlStructure.trim(); 
-            copyStatusSpanEl.textContent = ""; // Clear any previous copy status
-        });
-
-        // Event listener for the "Copy Code" button
-        copyButtonEl.addEventListener('click', function() {
-            const codeToCopy = outputDivEl.textContent.trim();
-            if (codeToCopy === "" || codeToCopy.includes("点击“生成代码”")) {
-                copyStatusSpanEl.textContent = "请先生成代码 (Please generate code first)";
-                copyStatusSpanEl.style.color = "red";
-                return;
-            }
-            // Use modern Clipboard API
-            navigator.clipboard.writeText(codeToCopy).then(function() {
-                copyStatusSpanEl.textContent = "代码已成功复制! (Code copied successfully!)";
-                copyStatusSpanEl.style.color = "green";
-            }).catch(function(err) {
-                copyStatusSpanEl.textContent = "复制失败 (Copy failed): " + err;
-                copyStatusSpanEl.style.color = "red";
-                 // Fallback to older execCommand method if Clipboard API fails
-                try {
-                    const textArea = document.createElement("textarea");
-                    textArea.value = codeToCopy;
-                    textArea.style.position = "fixed"; // Prevent scrolling to bottom of page
-                    textArea.style.opacity = 0; // Hide the textarea
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    copyStatusSpanEl.textContent = "代码已复制 (备用模式)! (Code copied - fallback mode!)";
-                    copyStatusSpanEl.style.color = "green";
-                } catch (e) {
-                    copyStatusSpanEl.textContent = "自动复制失败，请手动复制。 (Auto-copy failed. Please copy manually.)";
-                    copyStatusSpanEl.style.color = "red";
-                }
-            });
-            // Clear status message after 3 seconds
-            setTimeout(() => { copyStatusSpanEl.textContent = ''; }, 3000);
-        });
-        
-        // Set initial placeholder/example Markdown content
-        markdownInputEl.value = `## 图文混排滚动示例 (Scrollable Rich Text Example)
-
-这是一段顶部的文字。 (This is some text at the top.)
-
-![山脉风景 (Mountain Landscape)](https://images.pexels.com/photos/167699/pexels-photo-167699.jpeg?auto=compress&cs=tinysrgb&w=600&h=400)
-
-这是图片下方的一些描述文字，用于测试图文混排的间距和滚动效果。 (This is descriptive text below the image, for testing spacing and scrolling with mixed content.)
-
-下面是另一张图片，我们希望它们能一起在固定高度的容器内滚动。 (Here's another image; we want them to scroll together within the fixed-height container.)
-
-![森林小径 (Forest Path)](https://images.pexels.com/photos/302823/pexels-photo-302823.jpeg?auto=compress&cs=tinysrgb&w=600&h=400)
-
-### 纯图片列表 (Image List Only)
-
-如果您的Markdown内容主要是图片列表，它们也会按顺序排列并滚动： (If your Markdown content is primarily a list of images, they will also be arranged sequentially and scroll:)
-
-![图片一 (Image One)](https://images.pexels.com/photos/326055/pexels-photo-326055.jpeg?auto=compress&cs=tinysrgb&w=600&h=400)
-
-![图片二 (Image Two)](https://images.pexels.com/photos/673020/pexels-photo-673020.jpeg?auto=compress&cs=tinysrgb&w=600&h=400)
-
-![图片三 (Image Three)](https://images.pexels.com/photos/1323550/pexels-photo-1323550.jpeg?auto=compress&cs=tinysrgb&w=600&h=400)
-
-确保图片链接是可公开访问的。 (Ensure image links are publicly accessible.)
-
----
-**代码块示例 (Code Block Example):**
-\`\`\`javascript
-function greet(name) {
-  // This is a sample JavaScript code block
-  console.log(\`Hello, \${name}! Welcome to the scrollable content.\`);
-}
-greet("WeChat User");
-\`\`\`
-
-> 这是一个引用块。 (This is a blockquote.)
-> 它可以用来强调重要的信息或引言。 (It can be used to emphasize important information or quotations.)
-
-请记得在微信公众号的HTML模式下粘贴生成的代码，并在手机上预览最终效果。 (Remember to paste the generated code into the HTML mode of the WeChat Official Account editor and preview the final effect on a mobile phone.)
-`;
-        // Trigger initial generation to show example output and preview
-        generateButtonEl.click();
-
-    </script>
+    <footer class="source">
+      <span class="safety">训练建议不替代医疗意见。出现关节锐痛、胸闷、眩晕或异常气短应停止训练；有心血管、骨关节或其他慢性病时，先咨询医生。</span>
+    </footer>
+  </main>
+  <script>
+    (function(){
+      const form=document.getElementById('profile-form');
+      const error=document.getElementById('error');
+      const bmiOut=document.getElementById('bmi');
+      const intensityOut=document.getElementById('intensity');
+      const recoveryOut=document.getElementById('recovery');
+      const adviceOut=document.getElementById('advice');
+      function calculate(e){
+        if(e)e.preventDefault();
+        const h=Number(document.getElementById('height').value);
+        const w=Number(document.getElementById('weight').value);
+        const age=Number(document.getElementById('age').value);
+        const pushups=Number(document.getElementById('pushups').value);
+        if(!h||!w||!age||h<120||h>230||w<30||w>250||age<16||age>85||pushups<0||pushups>100){error.textContent='请填写合理的身高、体重、年龄和俯卧撑次数';return}
+        error.textContent='';
+        const bmi=w/Math.pow(h/100,2);
+        let band='健康范围',body='适合从每周三练开始';
+        if(bmi<18.5){band='偏低';body='训练先从保守组数开始，暂时不要安排大量有氧'}
+        else if(bmi>=24&&bmi<28){band='偏高';body='力量训练可配合低冲击快走'}
+        else if(bmi>=28){band='较高';body='先选择上斜动作，减少手腕和肩部压力'}
+        let level='标准俯卧撑',dose='每组 6–10 次';
+        if(pushups===0){level='上斜俯卧撑';dose='每组 8–12 次'}
+        else if(pushups<=5){level='跪姿俯卧撑';dose='每组 6–10 次'}
+        else if(pushups>15){level='慢速标准';dose='每组 8–12 次'}
+        bmiOut.textContent=bmi.toFixed(1);
+        bmiOut.nextElementSibling.textContent='BMI · '+band;
+        intensityOut.textContent=level;
+        intensityOut.nextElementSibling.textContent='建议起步级别';
+        recoveryOut.textContent=age>=35?'48–72h':'48h';
+        const ageNote=age>=35?'每次先热身 6–8 分钟，同类肌群至少休息 48 小时。':'每次先热身 5–8 分钟，并把动作稳定放在次数前面。';
+        adviceOut.textContent='你的 BMI 为 '+bmi.toFixed(1)+'，'+body+'。俯卧撑建议从“'+level+'”开始，做 3 组，'+dose+'，每组留约 2 次余力。'+ageNote;
+      }
+      form.addEventListener('submit',calculate);
+      calculate();
+      document.querySelectorAll('.filter').forEach(function(btn){btn.addEventListener('click',function(){
+        document.querySelectorAll('.filter').forEach(function(x){x.classList.remove('active')});
+        btn.classList.add('active');
+        const f=btn.dataset.filter;
+        document.querySelectorAll('.move').forEach(function(card){card.hidden=!(f==='all'||card.dataset.equipment===f)});
+      })});
+    })();
+  </script>
 </body>
 </html>
